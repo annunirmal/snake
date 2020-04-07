@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<head>
+    <title>Snake Game</title>
+    <link href="https://fonts.googleapis.com/css?family=Antic+Slab" rel="stylesheet">
+</head>
+<body>
+    <div id="score">0</div>
+    <canvas id="gameCanvas" width="300" height="300">&lt;</canvas>
+    <style>
+        #gameCanvas {
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+  
+        #score {
+          text-align: center;
+          font-size: 140px;
+          font-family: 'Antic Slab', serif;
+        }
+      </style>
+</body>
+
+<script>
+
+    const GAME_SPEED = 100;
+    const CANVAS_BORDER_COLOUR = 'black';
+    const CANVAS_BACKGROUND_COLOUR = "white";
+    const SNAKE_COLOUR = 'lightgreen';
+    const SNAKE_BORDER_COLOUR = 'darkgreen';
+    const FOOD_COLOUR = 'red';
+    const FOOD_BORDER_COLOUR = 'darkred';
+
+    let snake = [
+      {x: 150, y: 150},
+      {x: 140, y: 150},
+      {x: 130, y: 150},
+      {x: 120, y: 150},
+      {x: 110, y: 150}
+    ]
+
+    // The user's score
+    let score = 0;
+    // When set to true the snake is changing direction
+    let changingDirection = false;
+    // Food x-coordinate
+    let foodX;
+    // Food y-coordinate
+    let foodY;
+    // Horizontal velocity
+    let dx = 10;
+    // Vertical velocity
+    let dy = 0;
+
+    // Get the canvas element
+     const gameCanvas = document.getElementById("gameCanvas");
+    // Return a two dimensional drawing context
+    const ctx = gameCanvas.getContext("2d");
+
+    // Start game
+    main();
+    // Create the first food location
+    // createFood();
+    // // Call changeDirection whenever a key is pressed
+    // document.addEventListener("keydown", changeDirection);
+
+    /**
+     * Main function of the game
+     * called repeatedly to advance the game
+     */
+     function main() {
+      // If the game ended return early to stop game
+    //   if (didGameEnd()) return;
+
+      setTimeout(function onTick() {
+        changingDirection = false;
+        clearCanvas();
+        drawFood();
+    //     advanceSnake();
+        drawSnake();
+
+        // Call game again
+        main();
+      }, GAME_SPEED)
+    }
+
+    /**
+     * Creates random set of coordinates for the snake food.
+     */
+    function createFood() {
+        // Generate a random number the food x-coordinate
+        foodX = randomTen(0, gameCanvas.width - 10);
+        // Generate a random number for the food y-coordinate
+        foodY = randomTen(0, gameCanvas.height - 10);
+
+        // if the new food location is where the snake currently is, generate a new food location
+        snake.forEach(function isFoodOnSnake(part) {
+            const foodIsoNsnake = part.x == foodX && part.y == foodY;
+            if (foodIsoNsnake) createFood();
+        });
+    }
+
+    /**
+     * Draw the food on the canvas
+     */
+    function drawFood() {
+        ctx.fillStyle = FOOD_COLOUR;
+        ctx.strokestyle = FOOD_BORDER_COLOUR;
+        ctx.fillRect(foodX, foodY, 10, 10);
+        ctx.strokeRect(foodX, foodY, 10, 10);
+    }
+
+    /**
+     * Change the background colour of the canvas to CANVAS_BACKGROUND_COLOUR and
+     * draw a border around it
+     */
+    function clearCanvas() {
+        //  Select the colour to fill the drawing
+        ctx.fillStyle = CANVAS_BACKGROUND_COLOUR;
+        //  Select the colour for the border of the canvas
+        ctx.strokestyle = CANVAS_BORDER_COLOUR;
+
+        // Draw a "filled" rectangle to cover the entire canvas
+        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+        // Draw a "border" around the entire canvas
+        ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
+    }
+
+    function drawSnake() {
+        snake.forEach(drawSnakePart);
+    }
+
+    function drawSnakePart(snakePart) {
+        ctx.fillStyle = SNAKE_COLOUR;
+        ctx.strokestyle = SNAKE_BORDER_COLOUR;
+
+        // Draw a "filled" rectangle to cover the entire canvas
+        ctx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+        // Draw a "border" around the entire canvas
+        ctx.strokeRect(0, 0, gameCanvas.width, gameCanvas.height);
+    }
+</script>
+
